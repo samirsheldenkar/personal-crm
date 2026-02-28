@@ -280,7 +280,7 @@ Max Concurrent: 2 (Wave 2 + Wave 3 can overlap partially)
 
 ### Wave 1: Backend Foundation (1 day)
 
-- [ ] **Task 1.1: Add Error Logging Middleware**
+- [x] **Task 1.1: Add Error Logging Middleware**
 
   **What to do**: Create centralized error handling middleware that logs all errors with request IDs for debugging.
   
@@ -347,7 +347,7 @@ Max Concurrent: 2 (Wave 2 + Wave 3 can overlap partially)
 
 ---
 
-- [ ] **Task 1.2: Add Request Logging Middleware**
+- [x] **Task 1.2: Add Request Logging Middleware**
 
   **What to do**: Add request logging middleware to log all incoming requests for debugging and monitoring.
   
@@ -399,7 +399,7 @@ Max Concurrent: 2 (Wave 2 + Wave 3 can overlap partially)
 
 ### Wave 2: CSS Foundation (2 days) — CAN PARALLEL WITH WAVE 3
 
-- [ ] **Task 2.1: Create Layout Component CSS Files**
+- [x] **Task 2.1: Create Layout Component CSS Files**
 
   **What to do**: Create CSS files for layout components (Sidebar, AppLayout) with all referenced classes styled.
   
@@ -642,7 +642,7 @@ Max Concurrent: 2 (Wave 2 + Wave 3 can overlap partially)
 
 ### Wave 3: Essential Modals (2 days)
 
-- [ ] **Task 3.1: Create CreateContact Modal Component**
+- [x] **Task 3.1: Create CreateContact Modal Component**
 
   **What to do**: Implement a modal dialog for creating new contacts with form validation.
   
