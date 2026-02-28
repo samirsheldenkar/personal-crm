@@ -1,0 +1,7 @@
+Task 4.2 debounce verification
+
+[PASS] Upcoming Birthdays widget heading
+[PASS] Recent Activity widget heading
+[PASS] Debounce hook used with 300ms
+[PASS] Automatic search effect present
+[PASS] Search button removed
