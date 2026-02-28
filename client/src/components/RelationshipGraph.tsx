@@ -2,19 +2,30 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import type { ContactGraph, GraphEdge, GraphNode } from '../types';
 import './RelationshipGraph.css';
+const relationshipColors: Record<string, string> = {
+  family: '#3b82f6',
+  friend: '#10b981',
+  colleague: '#8b5cf6',
+  mentor: '#f59e0b',
+  mentee: '#ec4899',
+  partner: '#ef4444',
+  spouse: '#6366f1',
+  sibling: '#06b6d4',
+  parent: '#059669',
+  child: '#d97706',
+  other: '#6b7280',
+};
+
 
 type GraphSimulationNode = GraphNode & d3.SimulationNodeDatum;
 type GraphSimulationLink = Omit<GraphEdge, 'source' | 'target'> & d3.SimulationLinkDatum<GraphSimulationNode>;
 
-const isSimulationNode = (
-  value: string | number | GraphSimulationNode
-): value is GraphSimulationNode => typeof value === 'object' && value !== null;
-
 interface RelationshipGraphProps {
   graph: ContactGraph;
+  onNodeClick?: (contactId: string) => void;
 }
 
-export function RelationshipGraph({ graph }: RelationshipGraphProps) {
+export function RelationshipGraph({ graph, onNodeClick }: RelationshipGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
@@ -53,19 +64,39 @@ export function RelationshipGraph({ graph }: RelationshipGraphProps) {
       .force('collision', d3.forceCollide().radius(50));
 
     const link = g.append('g')
-      .attr('stroke', '#999')
-      .attr('stroke-opacity', 0.6)
-      .selectAll('line')
+      .selectAll('g')
       .data(links)
-      .join('line')
+      .join('g');
+
+    const linkPath = link.append('path')
+      .attr('id', (d) => `edge-${(d.source as GraphSimulationNode).id}-${(d.target as GraphSimulationNode).id}`)
+      .style('--edge-color', (d) => relationshipColors[d.type] || relationshipColors.other)
       .attr('stroke-width', 2)
+      .attr('fill', 'none')
       .attr('class', 'graph-edge');
+
+    link.append('text')
+      .attr('dy', -5)
+      .append('textPath')
+      .attr('href', (d) => `#edge-${(d.source as GraphSimulationNode).id}-${(d.target as GraphSimulationNode).id}`)
+      .attr('startOffset', '50%')
+      .attr('text-anchor', 'middle')
+      .style('font-size', '10px')
+      .style('fill', '#6b7280')
+      .style('pointer-events', 'none')
+      .text((d) => d.type);
 
     const node = g.append('g')
       .selectAll<SVGGElement, GraphSimulationNode>('g')
       .data(nodes)
       .join<SVGGElement>('g')
       .attr('class', 'graph-node')
+      .on('click', (event, d) => {
+        if (onNodeClick) {
+          event.stopPropagation();
+          onNodeClick(d.id);
+        }
+      })
       .call(d3.drag<SVGGElement, GraphSimulationNode>()
         .on('start', (event, d) => {
           if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -84,7 +115,14 @@ export function RelationshipGraph({ graph }: RelationshipGraphProps) {
 
     node.append('circle')
       .attr('r', (d) => d.id === graph.centerId ? 35 : 25)
-      .attr('fill', (d) => d.id === graph.centerId ? '#6366f1' : '#8b5cf6')
+      .attr('fill', (d) => {
+        if (d.id === graph.centerId) return '#6366f1';
+        const edge = graph.edges.find(e => 
+          (e.source === graph.centerId && e.target === d.id) || 
+          (e.target === graph.centerId && e.source === d.id)
+        );
+        return edge ? (relationshipColors[edge.type] || relationshipColors.other) : relationshipColors.other;
+      })
       .attr('stroke', '#fff')
       .attr('stroke-width', 3);
 
@@ -109,23 +147,11 @@ export function RelationshipGraph({ graph }: RelationshipGraphProps) {
       .text((d) => `${d.firstName} ${d.lastName || ''}\n${d.company || ''}`);
 
     simulation.on('tick', () => {
-      link
-        .attr('x1', (d) => {
-          const source = d.source;
-          return isSimulationNode(source) ? (source.x ?? 0) : 0;
-        })
-        .attr('y1', (d) => {
-          const source = d.source;
-          return isSimulationNode(source) ? (source.y ?? 0) : 0;
-        })
-        .attr('x2', (d) => {
-          const target = d.target;
-          return isSimulationNode(target) ? (target.x ?? 0) : 0;
-        })
-        .attr('y2', (d) => {
-          const target = d.target;
-          return isSimulationNode(target) ? (target.y ?? 0) : 0;
-        });
+      linkPath.attr('d', (d) => {
+        const source = d.source as GraphSimulationNode;
+        const target = d.target as GraphSimulationNode;
+        return `M${source.x ?? 0},${source.y ?? 0}L${target.x ?? 0},${target.y ?? 0}`;
+      });
 
       node.attr('transform', (d) => `translate(${d.x ?? 0},${d.y ?? 0})`);
     });
@@ -152,10 +178,12 @@ export function RelationshipGraph({ graph }: RelationshipGraphProps) {
           <span className="legend-dot" style={{ backgroundColor: '#6366f1' }}></span>
           <span>Center Contact</span>
         </div>
-        <div className="legend-item">
-          <span className="legend-dot" style={{ backgroundColor: '#8b5cf6' }}></span>
-          <span>Related Contact</span>
-        </div>
+        {Object.entries(relationshipColors).map(([type, color]) => (
+          <div className="legend-item" key={type}>
+            <span className="legend-dot" style={{ backgroundColor: color }}></span>
+            <span style={{ textTransform: 'capitalize' }}>{type}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

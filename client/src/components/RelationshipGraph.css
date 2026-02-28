@@ -29,7 +29,7 @@
 }
 
 .graph-edge {
-  stroke: var(--gray-300);
+  stroke: var(--edge-color, var(--gray-300));
   stroke-opacity: 0.6;
   transition: stroke var(--transition-fast), stroke-width var(--transition-fast);
 }
@@ -95,6 +95,6 @@
   }
   
   .graph-edge {
-    stroke: var(--gray-600);
+    stroke: var(--edge-color, var(--gray-600));
   }
 }
