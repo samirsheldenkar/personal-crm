@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import './RelationshipGraph.css';
 
 interface GraphNode {
   id: string;
@@ -41,6 +42,7 @@ export function RelationshipGraph({ graph }: RelationshipGraphProps) {
     const height = 600;
     
     svg.attr('width', width).attr('height', height);
+    svg.attr('class', 'relationship-graph graph-svg');
 
     const g = svg.append('g');
 
@@ -65,11 +67,13 @@ export function RelationshipGraph({ graph }: RelationshipGraphProps) {
       .data(graph.edges)
       .join('line')
       .attr('stroke-width', 2);
+      .attr('class', 'graph-edge')
 
     const node = g.append('g')
       .selectAll('g')
       .data(graph.nodes)
       .join('g')
+      .attr('class', 'graph-node')
       .call(d3.drag<any, any>()
         .on('start', (event, d: any) => {
           if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -99,6 +103,7 @@ export function RelationshipGraph({ graph }: RelationshipGraphProps) {
       .attr('font-size', '14px')
       .attr('font-weight', 'bold')
       .text((d: any) => `${d.firstName[0]}${d.lastName?.[0] || ''}`);
+      .attr('class', 'graph-label')
 
     node.append('text')
       .attr('dy', 50)
@@ -106,6 +111,7 @@ export function RelationshipGraph({ graph }: RelationshipGraphProps) {
       .attr('fill', '#374151')
       .attr('font-size', '12px')
       .text((d: any) => `${d.firstName} ${d.lastName || ''}`);
+      .attr('class', 'graph-label')
 
     node.append('title')
       .text((d: any) => `${d.firstName} ${d.lastName || ''}\n${d.company || ''}`);
