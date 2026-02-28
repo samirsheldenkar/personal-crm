@@ -10,11 +10,13 @@ import customFieldRoutes from './routes/customField.routes';
 import reminderRoutes from './routes/reminder.routes';
 import searchRoutes from './routes/search.routes';
 import { errorHandler } from './middleware/errorHandler';
+import { requestLogger } from './middleware/requestLogger';
 
 const app = express();
 
 app.use(cors({ origin: config.corsOrigin, credentials: true }));
 app.use(express.json());
+app.use(requestLogger);
 
 // Health check
 app.get('/api/health', (_req, res) => {

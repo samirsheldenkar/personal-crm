@@ -1,0 +1,14 @@
+=== Task 0.1: Docker Compose Fix ===
+
+BEFORE (line 40):
+  command: >
+    sh -c "npm run migrate && npm run seed && node dist/index.js"
+
+AFTER (line 40):
+    command: >
+      sh -c "npm run migrate && node dist/index.js"
+
+
+CHANGE: Removed 'npm run seed' from startup command
+IMPACT: Data now persists across container restarts
+STATUS: READY FOR TESTING
