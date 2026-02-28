@@ -7,6 +7,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { ContactListPage } from './pages/ContactListPage';
 import { ContactDetailPage } from './pages/ContactDetailPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -28,38 +29,87 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   return !isAuthenticated ? <>{children}</> : <Navigate to="/" />;
 }
 
+function ErrorBoundaryTestPage(): React.ReactElement {
+  throw new Error('Simulated crash for error boundary verification');
+}
+
 function AppRoutes() {
   return (
     <Routes>
       <Route
         path="/login"
         element={
-          <PublicRoute>
-            <LoginPage />
-          </PublicRoute>
+          <ErrorBoundary title="Login page crashed" resetLabel="Reload login">
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          </ErrorBoundary>
         }
       />
       <Route
         path="/register"
         element={
-          <PublicRoute>
-            <RegisterPage />
-          </PublicRoute>
+          <ErrorBoundary title="Registration page crashed" resetLabel="Reload registration">
+            <PublicRoute>
+              <RegisterPage />
+            </PublicRoute>
+          </ErrorBoundary>
         }
       />
       <Route
         path="/"
         element={
-          <PrivateRoute>
-            <AppLayout />
-          </PrivateRoute>
+          <ErrorBoundary title="Application shell crashed" resetLabel="Reload app shell">
+            <PrivateRoute>
+              <AppLayout />
+            </PrivateRoute>
+          </ErrorBoundary>
         }
       >
-        <Route index element={<DashboardPage />} />
-        <Route path="contacts" element={<ContactListPage />} />
-        <Route path="contacts/:id" element={<ContactDetailPage />} />
-        <Route path="settings" element={<SettingsPage />} />
+        <Route
+          index
+          element={
+            <ErrorBoundary title="Dashboard crashed" resetLabel="Reload dashboard">
+              <DashboardPage />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="contacts"
+          element={
+            <ErrorBoundary title="Contact list crashed" resetLabel="Reload contacts">
+              <ContactListPage />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="contacts/:id"
+          element={
+            <ErrorBoundary title="Contact details crashed" resetLabel="Reload contact">
+              <ContactDetailPage />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <ErrorBoundary title="Settings crashed" resetLabel="Reload settings">
+              <SettingsPage />
+            </ErrorBoundary>
+          }
+        />
       </Route>
+
+      {import.meta.env.DEV && (
+        <Route
+          path="/__error-boundary-test"
+          element={
+            <ErrorBoundary title="Error boundary test" resetLabel="Retry test">
+              <ErrorBoundaryTestPage />
+            </ErrorBoundary>
+          }
+        />
+      )}
     </Routes>
   );
 }

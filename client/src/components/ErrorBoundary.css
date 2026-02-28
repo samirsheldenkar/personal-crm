@@ -1,0 +1,21 @@
+.error-boundary {
+  margin: var(--spacing-6) auto;
+  max-width: 640px;
+  padding: var(--spacing-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--danger);
+  background: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+}
+
+.error-boundary h2 {
+  margin: 0 0 var(--spacing-2);
+  color: var(--danger);
+}
+
+.error-boundary p {
+  margin: 0 0 var(--spacing-4);
+  color: var(--text-muted);
+}
