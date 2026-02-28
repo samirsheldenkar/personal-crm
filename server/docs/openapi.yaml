@@ -1,0 +1,1251 @@
+openapi: 3.0.3
+info:
+  title: Personal CRM API
+  description: |
+    A self-hostable personal CRM focused on people and relationships.
+    
+    Features:
+    - Contact management with rich details
+    - Relationship graph visualization
+    - Notes with markdown support
+    - Tags and custom fields
+    - Reminders for keeping in touch
+    - Full-text search
+  version: 0.1.0
+  contact:
+    name: Personal CRM
+
+servers:
+  - url: http://localhost:3001/api/v1
+    description: Local development server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /auth/register:
+    post:
+      summary: Register a new user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterInput'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  tokens:
+                    $ref: '#/components/schemas/AuthTokens'
+        '400':
+          description: Validation error
+        '409':
+          description: Email already registered
+
+  /auth/login:
+    post:
+      summary: Login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  tokens:
+                    $ref: '#/components/schemas/AuthTokens'
+        '401':
+          description: Invalid credentials
+
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Tokens refreshed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokens:
+                    $ref: '#/components/schemas/AuthTokens'
+        '401':
+          description: Invalid refresh token
+
+  /contacts:
+    get:
+      summary: List contacts
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: tags
+          in: query
+          schema:
+            type: string
+            description: Comma-separated tag IDs
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [name, created_at, last_contacted_at]
+            default: name
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: asc
+        - name: archived
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: List of contacts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contacts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Contact'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+
+    post:
+      summary: Create a new contact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContactInput'
+      responses:
+        '201':
+          description: Contact created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+
+  /contacts/{id}:
+    get:
+      summary: Get contact by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Contact details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactWithDetails'
+        '404':
+          description: Contact not found
+
+    patch:
+      summary: Update contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateContactInput'
+      responses:
+        '200':
+          description: Contact updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+        '404':
+          description: Contact not found
+
+    delete:
+      summary: Delete contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Contact deleted
+        '404':
+          description: Contact not found
+
+  /contacts/{id}/archive:
+    post:
+      summary: Archive or unarchive contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                archived:
+                  type: boolean
+      responses:
+        '200':
+          description: Contact archive status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+
+  /contacts/{id}/timeline:
+    get:
+      summary: Get contact timeline
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Contact timeline
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Note'
+                  reminders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Reminder'
+                  timeline:
+                    type: array
+                    items:
+                      type: object
+
+  /relationships:
+    get:
+      summary: List relationships
+      parameters:
+        - name: contactId
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of relationships
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Relationship'
+
+    post:
+      summary: Create relationship
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRelationshipInput'
+      responses:
+        '201':
+          description: Relationship created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Relationship'
+
+  /relationships/{id}:
+    delete:
+      summary: Delete relationship
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Relationship deleted
+
+  /relationships/graph/{id}:
+    get:
+      summary: Get relationship graph for contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Graph data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactGraph'
+
+  /notes/contact/{contactId}:
+    get:
+      summary: List notes for contact
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of notes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Note'
+
+    post:
+      summary: Create note for contact
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNoteInput'
+      responses:
+        '201':
+          description: Note created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+
+  /notes/{id}:
+    patch:
+      summary: Update note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateNoteInput'
+      responses:
+        '200':
+          description: Note updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+
+    delete:
+      summary: Delete note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Note deleted
+
+  /tags:
+    get:
+      summary: List tags
+      responses:
+        '200':
+          description: List of tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+
+    post:
+      summary: Create tag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTagInput'
+      responses:
+        '201':
+          description: Tag created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+
+  /tags/{id}:
+    patch:
+      summary: Update tag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTagInput'
+      responses:
+        '200':
+          description: Tag updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+
+    delete:
+      summary: Delete tag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Tag deleted
+
+  /tags/assign/{contactId}:
+    post:
+      summary: Assign tags to contact
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignTagsInput'
+      responses:
+        '200':
+          description: Tags assigned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+
+  /tags/assign/{contactId}/{tagId}:
+    delete:
+      summary: Remove tag from contact
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: tagId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Tag removed from contact
+
+  /custom-fields:
+    get:
+      summary: List custom fields
+      responses:
+        '200':
+          description: List of custom fields
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomFieldDefinition'
+
+    post:
+      summary: Create custom field
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomFieldInput'
+      responses:
+        '201':
+          description: Custom field created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomFieldDefinition'
+
+  /custom-fields/{id}:
+    patch:
+      summary: Update custom field
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomFieldInput'
+      responses:
+        '200':
+          description: Custom field updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomFieldDefinition'
+
+    delete:
+      summary: Delete custom field
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Custom field deleted
+
+  /reminders:
+    get:
+      summary: List upcoming reminders
+      responses:
+        '200':
+          description: List of reminders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reminder'
+
+    post:
+      summary: Create reminder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReminderInput'
+      responses:
+        '201':
+          description: Reminder created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reminder'
+
+  /reminders/{id}:
+    patch:
+      summary: Update reminder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateReminderInput'
+      responses:
+        '200':
+          description: Reminder updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reminder'
+
+    delete:
+      summary: Delete reminder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Reminder deleted
+
+  /search:
+    get:
+      summary: Search contacts and notes
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchResult'
+                  query:
+                    type: string
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+          nullable: true
+
+    AuthTokens:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+
+    RegisterInput:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        displayName:
+          type: string
+
+    LoginInput:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    Contact:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+          nullable: true
+        avatar_url:
+          type: string
+          nullable: true
+        company:
+          type: string
+          nullable: true
+        job_title:
+          type: string
+          nullable: true
+        birthday:
+          type: string
+          format: date
+          nullable: true
+        emails:
+          type: array
+          items:
+            type: object
+        phones:
+          type: array
+          items:
+            type: object
+        addresses:
+          type: array
+          items:
+            type: object
+        social_links:
+          type: object
+        is_archived:
+          type: boolean
+        last_contacted_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ContactWithDetails:
+      allOf:
+        - $ref: '#/components/schemas/Contact'
+        - type: object
+          properties:
+            tags:
+              type: array
+              items:
+                $ref: '#/components/schemas/Tag'
+            customFields:
+              type: array
+              items:
+                type: object
+
+    CreateContactInput:
+      type: object
+      required:
+        - firstName
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        avatarUrl:
+          type: string
+        company:
+          type: string
+        jobTitle:
+          type: string
+        birthday:
+          type: string
+          format: date
+        emails:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: string
+              label:
+                type: string
+              primary:
+                type: boolean
+        phones:
+          type: array
+          items:
+            type: object
+        addresses:
+          type: array
+          items:
+            type: object
+        socialLinks:
+          type: object
+        customFields:
+          type: object
+        tagIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    UpdateContactInput:
+      allOf:
+        - $ref: '#/components/schemas/CreateContactInput'
+
+    Relationship:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        from_contact_id:
+          type: string
+          format: uuid
+        to_contact_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - friend
+            - colleague
+            - parent
+            - child
+            - sibling
+            - cousin
+            - partner
+            - spouse
+            - mentor
+            - mentee
+            - manager
+            - report
+            - introduced_by
+            - met_at_event
+            - acquaintance
+            - neighbor
+            - other
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+
+    CreateRelationshipInput:
+      type: object
+      required:
+        - fromContactId
+        - toContactId
+        - type
+      properties:
+        fromContactId:
+          type: string
+          format: uuid
+        toContactId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - friend
+            - colleague
+            - parent
+            - child
+            - sibling
+            - cousin
+            - partner
+            - spouse
+            - mentor
+            - mentee
+            - manager
+            - report
+            - introduced_by
+            - met_at_event
+            - acquaintance
+            - neighbor
+            - other
+        metadata:
+          type: object
+
+    ContactGraph:
+      type: object
+      properties:
+        nodes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              firstName:
+                type: string
+              lastName:
+                type: string
+              avatarUrl:
+                type: string
+              company:
+                type: string
+              jobTitle:
+                type: string
+              tags:
+                type: array
+                items:
+                  type: object
+        edges:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              source:
+                type: string
+              target:
+                type: string
+              type:
+                type: string
+        centerId:
+          type: string
+
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        contact_id:
+          type: string
+          format: uuid
+        body:
+          type: string
+        format:
+          type: string
+          enum: [markdown, plaintext]
+        tags:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateNoteInput:
+      type: object
+      required:
+        - body
+      properties:
+        body:
+          type: string
+        format:
+          type: string
+          enum: [markdown, plaintext]
+          default: markdown
+        tags:
+          type: array
+          items:
+            type: string
+
+    UpdateNoteInput:
+      type: object
+      properties:
+        body:
+          type: string
+        format:
+          type: string
+          enum: [markdown, plaintext]
+        tags:
+          type: array
+          items:
+            type: string
+
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        color:
+          type: string
+
+    CreateTagInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+          default: '#6366f1'
+
+    UpdateTagInput:
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+
+    AssignTagsInput:
+      type: object
+      required:
+        - tagIds
+      properties:
+        tagIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    CustomFieldDefinition:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        field_type:
+          type: string
+          enum: [text, number, date, select, multi_select, url, boolean]
+        options:
+          type: array
+          items:
+            type: string
+        default_value:
+          type: string
+          nullable: true
+        sort_order:
+          type: integer
+
+    CreateCustomFieldInput:
+      type: object
+      required:
+        - name
+        - fieldType
+      properties:
+        name:
+          type: string
+        fieldType:
+          type: string
+          enum: [text, number, date, select, multi_select, url, boolean]
+        options:
+          type: array
+          items:
+            type: string
+        defaultValue:
+          type: string
+        sortOrder:
+          type: integer
+
+    UpdateCustomFieldInput:
+      type: object
+      properties:
+        name:
+          type: string
+        fieldType:
+          type: string
+          enum: [text, number, date, select, multi_select, url, boolean]
+        options:
+          type: array
+          items:
+            type: string
+        defaultValue:
+          type: string
+        sortOrder:
+          type: integer
+
+    Reminder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        contact_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [keep_in_touch, one_time]
+        interval_days:
+          type: integer
+          nullable: true
+        due_date:
+          type: string
+          format: date
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        is_completed:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    CreateReminderInput:
+      type: object
+      required:
+        - contactId
+      properties:
+        contactId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [keep_in_touch, one_time]
+          default: keep_in_touch
+        intervalDays:
+          type: integer
+        dueDate:
+          type: string
+          format: date
+        note:
+          type: string
+
+    UpdateReminderInput:
+      type: object
+      properties:
+        intervalDays:
+          type: integer
+        dueDate:
+          type: string
+          format: date
+        note:
+          type: string
+        isCompleted:
+          type: boolean
+
+    SearchResult:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [contact, note]
+        id:
+          type: string
+        title:
+          type: string
+        subtitle:
+          type: string
+        contactId:
+          type: string
+        rank:
+          type: number
