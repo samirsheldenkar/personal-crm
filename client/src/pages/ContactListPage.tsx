@@ -10,6 +10,8 @@ export function ContactListPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [selectedTag, setSelectedTag] = useState<string>('');
   const [page, setPage] = useState(1);
@@ -22,6 +24,13 @@ export function ContactListPage() {
   }, [page, selectedTag]);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [contactToDelete, setContactToDelete] = useState<{id: string, name: string} | null>(null);
+
+  const getErrorMessage = (error: unknown, fallback: string) => {
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+    return fallback;
+  };
 
   const handleDelete = (e: React.MouseEvent, contact: Contact) => {
     e.preventDefault();
@@ -36,18 +45,23 @@ export function ContactListPage() {
   const confirmDelete = async () => {
     if (contactToDelete) {
       try {
+        setActionError(null);
         await contactsApi.delete(contactToDelete.id);
         setDeleteModalOpen(false);
         setContactToDelete(null);
-        loadData();
+        await loadData();
       } catch (error) {
         console.error('Failed to delete contact:', error);
+        setActionError(getErrorMessage(error, 'Could not delete contact. Please try again.'));
       }
     }
   };
 
 
   const loadData = async () => {
+    setLoading(true);
+    setDataError(null);
+
     try {
       const [contactsData, tagsData] = await Promise.all([
         contactsApi.list({ 
@@ -63,6 +77,7 @@ export function ContactListPage() {
       setTags(tagsData);
     } catch (error) {
       console.error('Failed to load data:', error);
+      setDataError(getErrorMessage(error, 'Could not load contacts. Please try again.'));
     } finally {
       setLoading(false);
     }
@@ -115,8 +130,27 @@ export function ContactListPage() {
         </div>
       </div>
 
+      {dataError && (
+        <div className="list-feedback list-error" role="alert">
+          <p>{dataError}</p>
+          <button type="button" className="btn btn-secondary btn-sm" onClick={loadData}>
+            Retry
+          </button>
+        </div>
+      )}
+
+      {actionError && (
+        <div className="list-feedback list-error" role="alert">
+          <p>{actionError}</p>
+        </div>
+      )}
+
       {loading ? (
-        <div className="loading">Loading contacts...</div>
+        <div className="contact-grid" aria-label="Loading contacts">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="contact-card skeleton-card" />
+          ))}
+        </div>
       ) : contacts.length === 0 ? (
         <div className="empty-state">
           <h3>No contacts found</h3>
