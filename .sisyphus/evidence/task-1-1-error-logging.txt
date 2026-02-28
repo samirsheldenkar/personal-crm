@@ -39,3 +39,109 @@ Request error {
     '    at endReadableNT (node:internal/streams/readable:1698:12)\n' +
     '    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)'
 }
+6:36:55 PM [tsx] change in ./src/index.ts Restarting...
+cnode:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (/home/samir/personal-crm/server/node_modules/express/lib/application.js:635:24)
+    at searchRoutes (/home/samir/personal-crm/server/src/index.ts:38:5)
+    at Object.<anonymous> (/home/samir/personal-crm/server/src/index.ts:42:16)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object.transformer (/home/samir/personal-crm/server/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v22.22.0
+8:47:10 PM [tsx] change in ./src/db/knexfile.ts Rerunning...
+cnode:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+Error: Transform failed with 1 error:
+/home/samir/personal-crm/server/src/db/knexfile.ts:28:0: ERROR: Expected identifier but found "}"
+    at failureErrorWithLog (/home/samir/personal-crm/server/node_modules/esbuild/lib/main.js:1467:15)
+    at /home/samir/personal-crm/server/node_modules/esbuild/lib/main.js:736:50
+    at responseCallbacks.<computed> (/home/samir/personal-crm/server/node_modules/esbuild/lib/main.js:603:9)
+    at handleIncomingPacket (/home/samir/personal-crm/server/node_modules/esbuild/lib/main.js:658:12)
+    at Socket.readFromStdout (/home/samir/personal-crm/server/node_modules/esbuild/lib/main.js:581:7)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23) {
+  name: 'TransformError'
+}
+
+Node.js v22.22.0
+8:48:25 PM [tsx] change in ./src/db/knexfile.ts Rerunning...
+cnode:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (/home/samir/personal-crm/server/node_modules/express/lib/application.js:635:24)
+    at searchRoutes (/home/samir/personal-crm/server/src/index.ts:38:5)
+    at Object.<anonymous> (/home/samir/personal-crm/server/src/index.ts:42:16)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object.transformer (/home/samir/personal-crm/server/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v22.22.0
+8:50:09 PM [tsx] unlink in ./src/db/knexfile.ts Rerunning...
+c🚀 Server running on http://localhost:3001
+8:51:10 PM [tsx] change in ./src/db/knexfile.ts Restarting...
+cnode:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (/home/samir/personal-crm/server/node_modules/express/lib/application.js:635:24)
+    at searchRoutes (/home/samir/personal-crm/server/src/index.ts:38:5)
+    at Object.<anonymous> (/home/samir/personal-crm/server/src/index.ts:42:16)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object.transformer (/home/samir/personal-crm/server/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v22.22.0
+8:57:13 PM [tsx] change in ./src/db/knexfile.ts Rerunning...
+c🚀 Server running on http://localhost:3001
