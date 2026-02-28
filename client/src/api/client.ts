@@ -87,8 +87,6 @@ class ApiClient {
     } catch {
       // ignored - refresh failed
     }
-      // Refresh failed
-    }
 
     this.clearTokens();
     return false;
