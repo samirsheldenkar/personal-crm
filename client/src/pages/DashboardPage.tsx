@@ -143,7 +143,9 @@ export function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [searchRetryToken, setSearchRetryToken] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState<string | null>(null);
   const [birthdaysLoading, setBirthdaysLoading] = useState(true);
   const [activityLoading, setActivityLoading] = useState(true);
   const [birthdaysError, setBirthdaysError] = useState<string | null>(null);
@@ -151,6 +153,13 @@ export function DashboardPage() {
   const [searchError, setSearchError] = useState<string | null>(null);
 
   const debouncedSearchQuery = useDebounce(searchQuery.trim(), 300);
+
+  const getErrorMessage = (error: unknown, fallback: string) => {
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+    return fallback;
+  };
 
   useEffect(() => {
     loadDashboardData();
@@ -182,7 +191,7 @@ export function DashboardPage() {
       } catch (error) {
         if (!isCancelled) {
           console.error('Search failed:', error);
-          setSearchError('Could not complete search. Please try again.');
+          setSearchError(getErrorMessage(error, 'Could not complete search. Please try again.'));
           setSearchResults([]);
         }
       } finally {
@@ -197,7 +206,7 @@ export function DashboardPage() {
     return () => {
       isCancelled = true;
     };
-  }, [debouncedSearchQuery]);
+  }, [debouncedSearchQuery, searchRetryToken]);
 
   const fetchAllContacts = async () => {
     const pageSize = 100;
@@ -221,6 +230,9 @@ export function DashboardPage() {
   };
 
   const loadDashboardData = async () => {
+    setDashboardError(null);
+    setLoading(true);
+
     try {
       const [remindersData, contactsData] = await Promise.all([
         remindersApi.list(),
@@ -231,6 +243,7 @@ export function DashboardPage() {
       setStats({ total: contactsData.total, recent: contactsData.contacts.length });
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
+      setDashboardError(getErrorMessage(error, 'Could not load dashboard summary. Please try again.'));
     } finally {
       setLoading(false);
     }
@@ -256,7 +269,7 @@ export function DashboardPage() {
       setUpcomingBirthdays(birthdayItems);
     } catch (error) {
       console.error('Failed to load upcoming birthdays:', error);
-      setBirthdaysError('Could not load upcoming birthdays.');
+      setBirthdaysError(getErrorMessage(error, 'Could not load upcoming birthdays.'));
     } finally {
       setBirthdaysLoading(false);
     }
@@ -332,7 +345,7 @@ export function DashboardPage() {
       setRecentActivity(sortedActivity);
     } catch (error) {
       console.error('Failed to load recent activity:', error);
-      setActivityError('Could not load recent activity.');
+      setActivityError(getErrorMessage(error, 'Could not load recent activity.'));
     } finally {
       setActivityLoading(false);
     }
@@ -352,7 +365,19 @@ export function DashboardPage() {
   };
 
   if (loading) {
-    return <div className="page">Loading...</div>;
+    return (
+      <div className="page dashboard-page">
+        <div className="dashboard-loading" aria-label="Loading dashboard">
+          <div className="loading-skeleton loading-skeleton-title" />
+          <div className="loading-skeleton loading-skeleton-subtitle" />
+          <div className="loading-skeleton-grid">
+            <div className="loading-skeleton loading-skeleton-card" />
+            <div className="loading-skeleton loading-skeleton-card" />
+            <div className="loading-skeleton loading-skeleton-card" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -361,6 +386,15 @@ export function DashboardPage() {
         <h1>{getGreeting()}</h1>
         <p>Here's what's happening with your contacts</p>
       </header>
+
+      {dashboardError && (
+        <div className="widget-state widget-error" role="alert">
+          <p>{dashboardError}</p>
+          <button type="button" className="btn btn-secondary btn-sm" onClick={loadDashboardData}>
+            Retry
+          </button>
+        </div>
+      )}
 
       <div className="dashboard-search">
         <input
@@ -378,7 +412,18 @@ export function DashboardPage() {
 
       {searchError && (
         <div className="widget-state widget-error" role="alert">
-          {searchError}
+          <p>{searchError}</p>
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            onClick={() => {
+              if (searchQuery.trim()) {
+                setSearchRetryToken((token) => token + 1);
+              }
+            }}
+          >
+            Retry
+          </button>
         </div>
       )}
 
@@ -492,7 +537,12 @@ export function DashboardPage() {
             {birthdaysLoading ? (
               <div className="widget-state">Loading birthdays...</div>
             ) : birthdaysError ? (
-              <div className="widget-state widget-error" role="alert">{birthdaysError}</div>
+              <div className="widget-state widget-error" role="alert">
+                <p>{birthdaysError}</p>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={loadBirthdaysAndActivity}>
+                  Retry
+                </button>
+              </div>
             ) : upcomingBirthdays.length === 0 ? (
               <div className="empty-state">
                 <p>No birthdays in the next 30 days</p>
@@ -525,7 +575,12 @@ export function DashboardPage() {
             {activityLoading ? (
               <div className="widget-state">Loading activity...</div>
             ) : activityError ? (
-              <div className="widget-state widget-error" role="alert">{activityError}</div>
+              <div className="widget-state widget-error" role="alert">
+                <p>{activityError}</p>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={loadBirthdaysAndActivity}>
+                  Retry
+                </button>
+              </div>
             ) : recentActivity.length === 0 ? (
               <div className="empty-state">
                 <p>No activity yet</p>

@@ -159,6 +159,11 @@ p {
   background-color: var(--gray-100);
 }
 
+.btn-sm {
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--text-xs);
+}
+
 @media (prefers-color-scheme: dark) {
   .btn-secondary:hover {
     background-color: var(--gray-700);
