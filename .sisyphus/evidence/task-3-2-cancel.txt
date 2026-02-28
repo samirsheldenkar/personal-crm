@@ -1,0 +1,12 @@
+Cancel Verification:
+
+1. Modal opens when delete button is clicked.
+2. Modal closes when:
+   - Cancel button is clicked
+   - Close (X) button is clicked
+   - ESC key is pressed
+   - Backdrop is clicked
+3. When modal closes without confirmation:
+   - No API call is made
+   - Contact is not deleted
+   - Navigation does not occur

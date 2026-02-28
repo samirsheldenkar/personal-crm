@@ -195,3 +195,27 @@
 .empty-state .btn {
   margin-top: var(--spacing-4);
 }
+
+.contact-card-delete {
+  position: absolute;
+  top: var(--spacing-4);
+  right: var(--spacing-4);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--spacing-1);
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  transition: all 0.2s;
+  z-index: 2;
+}
+
+.contact-card:hover .contact-card-delete {
+  opacity: 1;
+}
+
+.contact-card-delete:hover {
+  background-color: var(--danger-bg, #fef2f2);
+  color: var(--danger, #ef4444);
+}

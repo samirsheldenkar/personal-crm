@@ -1,0 +1,11 @@
+(Screenshot placeholder - cannot take screenshots in this environment)
+The DeleteConfirmationModal is implemented with the following visual characteristics:
+- Modal overlay with blur effect
+- White background (dark in dark mode)
+- Red warning icon
+- Title "Delete Contact" in red
+- Message asking for confirmation
+- Item name in bold
+- "This action cannot be undone" subtext
+- Cancel button (secondary style)
+- Delete button (danger style - red)

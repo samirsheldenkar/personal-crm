@@ -66,8 +66,8 @@ export function RelationshipGraph({ graph }: RelationshipGraphProps) {
       .selectAll('line')
       .data(graph.edges)
       .join('line')
-      .attr('stroke-width', 2);
-      .attr('class', 'graph-edge')
+      .attr('stroke-width', 2)
+      .attr('class', 'graph-edge');
 
     const node = g.append('g')
       .selectAll('g')
@@ -102,16 +102,16 @@ export function RelationshipGraph({ graph }: RelationshipGraphProps) {
       .attr('fill', 'white')
       .attr('font-size', '14px')
       .attr('font-weight', 'bold')
-      .text((d: any) => `${d.firstName[0]}${d.lastName?.[0] || ''}`);
-      .attr('class', 'graph-label')
+      .text((d: any) => `${d.firstName[0]}${d.lastName?.[0] || ''}`)
+      .attr('class', 'graph-label');
 
     node.append('text')
       .attr('dy', 50)
       .attr('text-anchor', 'middle')
       .attr('fill', '#374151')
       .attr('font-size', '12px')
-      .text((d: any) => `${d.firstName} ${d.lastName || ''}`);
-      .attr('class', 'graph-label')
+      .text((d: any) => `${d.firstName} ${d.lastName || ''}`)
+      .attr('class', 'graph-label');
 
     node.append('title')
       .text((d: any) => `${d.firstName} ${d.lastName || ''}\n${d.company || ''}`);

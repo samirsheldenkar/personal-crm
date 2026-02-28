@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { contactsApi, CreateContactInput } from '../api/contacts';
+import { contactsApi, type CreateContactInput } from '../api/contacts';
 import './CreateContactModal.css';
 
 interface CreateContactModalProps {

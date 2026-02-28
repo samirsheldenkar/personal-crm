@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { contactsApi, notesApi, relationshipsApi } from '../api';
 import { RelationshipGraph } from '../components/RelationshipGraph';
+import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
 import './ContactDetailPage.css';
 
 export function ContactDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [contact, setContact] = useState<any>(null);
   const [notes, setNotes] = useState<any[]>([]);
   const [graph, setGraph] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'notes' | 'relationships'>('overview');
   const [loading, setLoading] = useState(true);
   const [newNote, setNewNote] = useState('');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -49,6 +52,21 @@ export function ContactDetailPage() {
       console.error('Failed to add note:', error);
     }
   };
+  const handleDelete = () => {
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (contact) {
+      try {
+        await contactsApi.delete(contact.id);
+        navigate('/');
+      } catch (error) {
+        console.error('Failed to delete contact:', error);
+      }
+    }
+  };
+
 
   if (loading) {
     return <div className="page">Loading...</div>;
@@ -71,6 +89,14 @@ export function ContactDetailPage() {
             {contact.job_title && contact.company && (
               <p>{contact.job_title} at {contact.company}</p>
             )}
+          </div>
+          <div className="header-actions">
+            <button 
+              className="btn btn-danger" 
+              onClick={handleDelete}
+            >
+              Delete Contact
+            </button>
           </div>
         </div>
       </div>
@@ -183,6 +209,14 @@ export function ContactDetailPage() {
           </div>
         )}
       </div>
+      <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Delete Contact"
+        message="Are you sure you want to delete this contact? All associated data including notes and relationships will be permanently removed."
+        itemName={contact ? `${contact.first_name} ${contact.last_name || ''}`.trim() : ''}
+      />
     </div>
   );
 }
