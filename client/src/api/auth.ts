@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import type { AuthTokens, User } from '../types';
 
 export interface LoginInput {
   email: string;
@@ -12,19 +13,12 @@ export interface RegisterInput {
 }
 
 export interface AuthResponse {
-  user: {
-    id: string;
-    email: string;
-    displayName: string | null;
-  };
-  tokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
+  user: User;
+  tokens: AuthTokens;
 }
 
 export const authApi = {
   login: (input: LoginInput) => apiClient.post<AuthResponse>('/auth/login', input),
   register: (input: RegisterInput) => apiClient.post<AuthResponse>('/auth/register', input),
-  refresh: (refreshToken: string) => apiClient.post<{ tokens: { accessToken: string; refreshToken: string } }>('/auth/refresh', { refreshToken }),
+  refresh: (refreshToken: string) => apiClient.post<{ tokens: AuthTokens }>('/auth/refresh', { refreshToken }),
 };

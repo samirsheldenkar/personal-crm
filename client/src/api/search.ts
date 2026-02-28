@@ -1,13 +1,5 @@
 import { apiClient } from './client';
-
-export interface SearchResult {
-  type: 'contact' | 'note';
-  id: string;
-  title: string;
-  subtitle: string;
-  contactId: string;
-  rank: number;
-}
+import type { SearchResult } from '../types';
 
 export const searchApi = {
   search: (query: string, limit?: number) => {

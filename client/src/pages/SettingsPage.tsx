@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { tagsApi, customFieldsApi } from '../api';
+import type { CustomField, Tag } from '../types';
 import './SettingsPage.css';
 
 export function SettingsPage() {
-  const [tags, setTags] = useState<any[]>([]);
-  const [customFields, setCustomFields] = useState<any[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [activeTab, setActiveTab] = useState<'tags' | 'fields'>('tags');
 
   useEffect(() => {

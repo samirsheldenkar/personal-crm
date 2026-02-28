@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { remindersApi, contactsApi, searchApi } from '../api';
+import type { Contact, Reminder, SearchResult } from '../types';
 import './DashboardPage.css';
 
 export function DashboardPage() {
-  const [reminders, setReminders] = useState<any[]>([]);
-  const [recentContacts, setRecentContacts] = useState<any[]>([]);
+  const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [recentContacts, setRecentContacts] = useState<Contact[]>([]);
   const [stats, setStats] = useState({ total: 0, recent: 0 });
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

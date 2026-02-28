@@ -3,14 +3,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { contactsApi, notesApi, relationshipsApi } from '../api';
 import { RelationshipGraph } from '../components/RelationshipGraph';
 import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
+import type { ContactEmail, ContactPhone, ContactGraph, ContactWithDetails, Note } from '../types';
 import './ContactDetailPage.css';
 
 export function ContactDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [contact, setContact] = useState<any>(null);
-  const [notes, setNotes] = useState<any[]>([]);
-  const [graph, setGraph] = useState<any>(null);
+  const [contact, setContact] = useState<ContactWithDetails | null>(null);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [graph, setGraph] = useState<ContactGraph | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'notes' | 'relationships'>('overview');
   const [loading, setLoading] = useState(true);
   const [newNote, setNewNote] = useState('');
@@ -144,13 +145,13 @@ export function ContactDetailPage() {
                   <p>{new Date(contact.birthday).toLocaleDateString()}</p>
                 </div>
               )}
-              {contact.emails?.map((email: any, idx: number) => (
+              {contact.emails?.map((email: ContactEmail, idx: number) => (
                 <div className="detail-item" key={idx}>
                   <label>Email {email.label && `(${email.label})`}</label>
                   <p>{email.value}</p>
                 </div>
               ))}
-              {contact.phones?.map((phone: any, idx: number) => (
+              {contact.phones?.map((phone: ContactPhone, idx: number) => (
                 <div className="detail-item" key={idx}>
                   <label>Phone {phone.label && `(${phone.label})`}</label>
                   <p>{phone.value}</p>
@@ -162,7 +163,7 @@ export function ContactDetailPage() {
               <div className="contact-tags-section">
                 <h3>Tags</h3>
                 <div className="tag-list">
-                  {contact.tags.map((tag: any) => (
+                  {contact.tags.map((tag) => (
                     <span
                       key={tag.id}
                       className="badge"

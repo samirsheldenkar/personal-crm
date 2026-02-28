@@ -1,10 +1,5 @@
 import { apiClient } from './client';
-
-export interface Tag {
-  id: string;
-  name: string;
-  color: string;
-}
+import type { Tag } from '../types';
 
 export const tagsApi = {
   list: () => apiClient.get<Tag[]>('/tags'),

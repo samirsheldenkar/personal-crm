@@ -1,14 +1,5 @@
 import { apiClient } from './client';
-
-export interface Note {
-  id: string;
-  contact_id: string;
-  body: string;
-  format: 'markdown' | 'plaintext';
-  tags: string[];
-  created_at: string;
-  updated_at: string;
-}
+import type { Note } from '../types';
 
 export const notesApi = {
   listByContact: (contactId: string) => apiClient.get<Note[]>(`/notes/contact/${contactId}`),

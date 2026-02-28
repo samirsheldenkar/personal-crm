@@ -1,15 +1,5 @@
 import { apiClient } from './client';
-
-export interface Reminder {
-  id: string;
-  contact_id: string;
-  type: 'keep_in_touch' | 'one_time';
-  interval_days: number | null;
-  due_date: string | null;
-  note: string | null;
-  is_completed: boolean;
-  created_at: string;
-}
+import type { Reminder } from '../types';
 
 export const remindersApi = {
   list: () => apiClient.get<Reminder[]>('/reminders'),

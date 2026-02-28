@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { contactsApi, tagsApi } from '../api';
+import type { Contact, Tag } from '../types';
 import './ContactListPage.css';
 import { CreateContactModal } from '../components/CreateContactModal';
 import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
 
 export function ContactListPage() {
-  const [contacts, setContacts] = useState<any[]>([]);
-  const [tags, setTags] = useState<any[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedTag, setSelectedTag] = useState<string>('');
@@ -22,7 +23,7 @@ export function ContactListPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [contactToDelete, setContactToDelete] = useState<{id: string, name: string} | null>(null);
 
-  const handleDelete = (e: React.MouseEvent, contact: any) => {
+  const handleDelete = (e: React.MouseEvent, contact: Contact) => {
     e.preventDefault();
     e.stopPropagation();
     setContactToDelete({
