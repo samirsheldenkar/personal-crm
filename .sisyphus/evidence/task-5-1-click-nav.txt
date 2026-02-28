@@ -1,0 +1,4 @@
+Implemented click navigation in RelationshipGraph.tsx.
+Added onNodeClick prop and handler.
+Updated ContactDetailPage.tsx to pass navigation handler.
+Verified code changes and build success.

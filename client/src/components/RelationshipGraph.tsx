@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import type { ContactGraph, GraphEdge, GraphNode } from '../types';
 import './RelationshipGraph.css';
@@ -26,7 +26,35 @@ interface RelationshipGraphProps {
 }
 
 export function RelationshipGraph({ graph, onNodeClick }: RelationshipGraphProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const minimumWidth = 320;
+    const minimumHeight = 320;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+
+      const width = Math.max(Math.round(entry.contentRect.width), minimumWidth);
+      const height = Math.max(Math.round(entry.contentRect.height), minimumHeight);
+
+      setDimensions((previousDimensions) => {
+        if (previousDimensions.width === width && previousDimensions.height === height) {
+          return previousDimensions;
+        }
+
+        return { width, height };
+      });
+    });
+
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!svgRef.current || !graph) return;
@@ -34,8 +62,7 @@ export function RelationshipGraph({ graph, onNodeClick }: RelationshipGraphProps
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    const width = 800;
-    const height = 600;
+    const { width, height } = dimensions;
     
     svg.attr('width', width).attr('height', height);
     svg.attr('class', 'relationship-graph graph-svg');
@@ -159,7 +186,7 @@ export function RelationshipGraph({ graph, onNodeClick }: RelationshipGraphProps
     return () => {
       simulation.stop();
     };
-  }, [graph]);
+  }, [graph, onNodeClick, dimensions]);
 
   if (!graph || graph.nodes.length === 0) {
     return (
@@ -171,7 +198,7 @@ export function RelationshipGraph({ graph, onNodeClick }: RelationshipGraphProps
   }
 
   return (
-    <div className="relationship-graph-container">
+    <div ref={containerRef} className="relationship-graph-container">
       <svg ref={svgRef} className="relationship-graph"></svg>
       <div className="graph-legend">
         <div className="legend-item">

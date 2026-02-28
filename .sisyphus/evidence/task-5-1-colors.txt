@@ -1,0 +1,4 @@
+Implemented color coding in RelationshipGraph.tsx.
+Added relationshipColors map.
+Updated D3 logic to color nodes and edges based on relationship type.
+Verified code changes and build success.
