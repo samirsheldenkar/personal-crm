@@ -9,6 +9,7 @@ import tagRoutes from './routes/tag.routes';
 import customFieldRoutes from './routes/customField.routes';
 import reminderRoutes from './routes/reminder.routes';
 import searchRoutes from './routes/search.routes';
+import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
 
@@ -29,6 +30,8 @@ app.use('/api/v1/tags', tagRoutes);
 app.use('/api/v1/custom-fields', customFieldRoutes);
 app.use('/api/v1/reminders', reminderRoutes);
 app.use('/api/v1/search', searchRoutes);
+
+app.use(errorHandler);
 
 app.listen(config.port, () => {
   console.log(`🚀 Server running on http://localhost:${config.port}`);

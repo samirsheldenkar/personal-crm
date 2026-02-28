@@ -1,0 +1,23 @@
+
+> personal-crm-server@0.1.0 dev
+> tsx watch src/index.ts
+
+🚀 Server running on http://localhost:3001
+Request error {
+  requestId: '50d81b58-43c7-4e5d-a865-c40b010db0e2',
+  timestamp: '2026-02-28T18:24:03.456Z',
+  path: '/api/v1/auth/register',
+  method: 'POST',
+  message: "Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+  stack: "SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)\n" +
+    '    at JSON.parse (<anonymous>)\n' +
+    '    at parse (/home/samir/personal-crm/server/node_modules/body-parser/lib/types/json.js:92:19)\n' +
+    '    at /home/samir/personal-crm/server/node_modules/body-parser/lib/read.js:128:18\n' +
+    '    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n' +
+    '    at invokeCallback (/home/samir/personal-crm/server/node_modules/raw-body/index.js:238:16)\n' +
+    '    at done (/home/samir/personal-crm/server/node_modules/raw-body/index.js:227:7)\n' +
+    '    at IncomingMessage.onEnd (/home/samir/personal-crm/server/node_modules/raw-body/index.js:287:7)\n' +
+    '    at IncomingMessage.emit (node:events:519:28)\n' +
+    '    at endReadableNT (node:internal/streams/readable:1698:12)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)'
+}
