@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { contactsApi, tagsApi } from '../api';
 import './ContactListPage.css';
+import { CreateContactModal } from '../components/CreateContactModal';
 
 export function ContactListPage() {
   const [contacts, setContacts] = useState<any[]>([]);
@@ -13,6 +14,7 @@ export function ContactListPage() {
   const [total, setTotal] = useState(0);
   const limit = 20;
 
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   useEffect(() => {
     loadData();
   }, [page, selectedTag]);
@@ -50,7 +52,7 @@ export function ContactListPage() {
     <div className="page">
       <div className="page-header">
         <h1>Contacts</h1>
-        <button className="btn btn-primary" onClick={() => alert('Add contact - TODO')}>
+        <button className="btn btn-primary" onClick={() => setIsCreateModalOpen(true)}>
           + Add Contact
         </button>
       </div>
@@ -91,7 +93,7 @@ export function ContactListPage() {
         <div className="empty-state">
           <h3>No contacts found</h3>
           <p>Get started by adding your first contact</p>
-          <button className="btn btn-primary" onClick={() => alert('Add contact - TODO')}>
+          <button className="btn btn-primary" onClick={() => setIsCreateModalOpen(true)}>
             Add Contact
           </button>
         </div>
@@ -154,6 +156,15 @@ export function ContactListPage() {
             </div>
           )}
         </>
+      )}
+      {isCreateModalOpen && (
+        <CreateContactModal
+          onClose={() => setIsCreateModalOpen(false)}
+          onSuccess={() => {
+            setIsCreateModalOpen(false);
+            loadData();
+          }}
+        />
       )}
     </div>
   );
