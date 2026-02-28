@@ -37,7 +37,7 @@ services:
       db:
         condition: service_healthy
     command: >
-      sh -c "npm run migrate && npm run seed && node dist/index.js"
+      sh -c "npm run migrate && node dist/index.js"
 
   web:
     build: ./client
