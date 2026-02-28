@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { tagsApi, customFieldsApi } from '../api';
+import './SettingsPage.css';
 
 export function SettingsPage() {
   const [tags, setTags] = useState<any[]>([]);

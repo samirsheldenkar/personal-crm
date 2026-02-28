@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { remindersApi, contactsApi, searchApi } from '../api';
+import './DashboardPage.css';
 
 export function DashboardPage() {
   const [reminders, setReminders] = useState<any[]>([]);

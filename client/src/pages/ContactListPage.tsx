@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { contactsApi, tagsApi } from '../api';
+import './ContactListPage.css';
 
 export function ContactListPage() {
   const [contacts, setContacts] = useState<any[]>([]);

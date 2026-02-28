@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { contactsApi, notesApi, relationshipsApi } from '../api';
 import { RelationshipGraph } from '../components/RelationshipGraph';
+import './ContactDetailPage.css';
 
 export function ContactDetailPage() {
   const { id } = useParams<{ id: string }>();

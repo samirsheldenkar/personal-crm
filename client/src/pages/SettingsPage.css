@@ -1,0 +1,51 @@
+.settings-tabs {
+  display: flex;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-6);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-content {
+  background: var(--bg-card);
+  padding: var(--spacing-6);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  min-height: 400px;
+}
+
+.settings-content h2 {
+  margin-bottom: var(--spacing-6);
+  font-size: var(--text-xl);
+  padding-bottom: var(--spacing-4);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.custom-field-list {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.custom-field-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-4);
+  background: var(--bg-body);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.custom-field-item:hover {
+  background-color: var(--gray-100);
+}
+
+@media (prefers-color-scheme: dark) {
+  .custom-field-item:hover {
+    background-color: var(--gray-800);
+  }
+}
+
+.custom-field-item strong {
+  font-weight: 500;
+}
