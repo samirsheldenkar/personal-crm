@@ -69,7 +69,7 @@ export function CreateContactModal({ onClose, onSuccess }: CreateContactModalPro
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validate()) return;
 
     setIsSubmitting(true);
@@ -79,8 +79,8 @@ export function CreateContactModal({ onClose, onSuccess }: CreateContactModalPro
       const input: CreateContactInput = {
         firstName: formData.firstName,
         lastName: formData.lastName || undefined,
-        emails: formData.email ? [{ value: formData.email, type: 'work' }] : [],
-        phones: formData.phone ? [{ value: formData.phone, type: 'mobile' }] : [],
+        emails: formData.email ? [{ value: formData.email, label: 'work' }] : [],
+        phones: formData.phone ? [{ value: formData.phone, label: 'mobile' }] : [],
       };
 
       await contactsApi.create(input);

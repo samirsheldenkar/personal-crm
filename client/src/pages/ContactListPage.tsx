@@ -5,6 +5,7 @@ import type { Contact, Tag } from '../types';
 import './ContactListPage.css';
 import { CreateContactModal } from '../components/CreateContactModal';
 import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
+import { getErrorMessage } from '../utils/getErrorMessage';
 
 export function ContactListPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -19,18 +20,12 @@ export function ContactListPage() {
   const limit = 20;
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [contactToDelete, setContactToDelete] = useState<{ id: string, name: string } | null>(null);
+
   useEffect(() => {
     loadData();
   }, [page, selectedTag]);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [contactToDelete, setContactToDelete] = useState<{id: string, name: string} | null>(null);
-
-  const getErrorMessage = (error: unknown, fallback: string) => {
-    if (error instanceof Error && error.message) {
-      return error.message;
-    }
-    return fallback;
-  };
 
   const handleDelete = (e: React.MouseEvent, contact: Contact) => {
     e.preventDefault();
@@ -64,11 +59,11 @@ export function ContactListPage() {
 
     try {
       const [contactsData, tagsData] = await Promise.all([
-        contactsApi.list({ 
-          page, 
-          limit, 
+        contactsApi.list({
+          page,
+          limit,
           search: search || undefined,
-          tags: selectedTag || undefined 
+          tags: selectedTag || undefined
         }),
         tagsApi.list(),
       ]);
@@ -168,7 +163,7 @@ export function ContactListPage() {
                 to={`/contacts/${contact.id}`}
                 className="contact-card"
               >
-                <button 
+                <button
                   className="contact-card-delete"
                   onClick={(e) => handleDelete(e, contact)}
                   aria-label="Delete contact"
@@ -190,15 +185,15 @@ export function ContactListPage() {
                     )}
                   </div>
                 </div>
-                
+
                 {contact.company && (
                   <p className="contact-company">{contact.company}</p>
                 )}
-                
+
                 {contact.emails?.length > 0 && (
                   <p className="contact-email">{contact.emails[0].value}</p>
                 )}
-                
+
                 {contact.phones?.length > 0 && (
                   <p className="contact-phone">{contact.phones[0].value}</p>
                 )}

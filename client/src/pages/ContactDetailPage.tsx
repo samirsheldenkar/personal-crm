@@ -5,6 +5,7 @@ import type { CreateContactInput } from '../api/contacts';
 import { RelationshipGraph } from '../components/RelationshipGraph';
 import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
 import type { ContactEmail, ContactPhone, ContactAddress, ContactGraph, ContactWithDetails, Note } from '../types';
+import { getErrorMessage } from '../utils/getErrorMessage';
 import './ContactDetailPage.css';
 
 export function ContactDetailPage() {
@@ -22,12 +23,7 @@ export function ContactDetailPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<Partial<CreateContactInput>>({});
 
-  const getErrorMessage = (error: unknown, fallback: string) => {
-    if (error instanceof Error && error.message) {
-      return error.message;
-    }
-    return fallback;
-  };
+
 
   useEffect(() => {
     if (id) {
@@ -46,10 +42,11 @@ export function ContactDetailPage() {
     setLoadError(null);
 
     try {
+      const contactId = id!;
       const [contactData, notesData, graphData] = await Promise.all([
-        contactsApi.getById(id!),
-        notesApi.listByContact(id!),
-        relationshipsApi.getGraph(id!),
+        contactsApi.getById(contactId),
+        notesApi.listByContact(contactId),
+        relationshipsApi.getGraph(contactId),
       ]);
       setContact(contactData);
       setNotes(notesData);
@@ -66,7 +63,7 @@ export function ContactDetailPage() {
   const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newNote.trim()) return;
-    
+
     try {
       setActionError(null);
       await notesApi.create(id!, { body: newNote });
@@ -251,24 +248,24 @@ export function ContactDetailPage() {
               </div>
             ) : (
               <>
-<h1>{contact.first_name} {contact.last_name || ''}</h1>
-{contact.job_title && contact.company && (
-<p>{contact.job_title} at {contact.company}</p>
-            )}
+                <h1>{contact.first_name} {contact.last_name || ''}</h1>
+                {contact.job_title && contact.company && (
+                  <p>{contact.job_title} at {contact.company}</p>
+                )}
               </>
             )}
-</div>
+          </div>
           <div className="header-actions">
             {isEditing ? (
               <>
-            <button 
-                  className="btn btn-secondary" 
+                <button
+                  className="btn btn-secondary"
                   onClick={cancelEditing}
                 >
                   Cancel
                 </button>
-                <button 
-                  className="btn btn-primary" 
+                <button
+                  className="btn btn-primary"
                   onClick={saveChanges}
                 >
                   Save Changes
@@ -276,21 +273,21 @@ export function ContactDetailPage() {
               </>
             ) : (
               <>
-                <button 
-                  className="btn btn-secondary" 
+                <button
+                  className="btn btn-secondary"
                   onClick={startEditing}
                 >
                   Edit
                 </button>
                 <button
-className="btn btn-danger"
-onClick={handleDelete}
->
-Delete Contact
-            </button>
+                  className="btn btn-danger"
+                  onClick={handleDelete}
+                >
+                  Delete Contact
+                </button>
               </>
             )}
-</div>
+          </div>
         </div>
       </div>
 
@@ -447,86 +444,86 @@ Delete Contact
                     ))}
                     <button type="button" className="btn btn-secondary btn-sm" onClick={() => addArrayItem('addresses')}>+ Add Address</button>
                   </div>
-                  
+
                   <div className="detail-item edit-section full-width">
                     <label>Social Links</label>
                     <div className="edit-row">
-                        <span className="input-prefix">LinkedIn</span>
-                        <input
-                          type="text"
-                          className="input"
-                          value={editForm.socialLinks?.linkedin || ''}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, socialLinks: { ...prev.socialLinks, linkedin: e.target.value } }))}
-                          placeholder="LinkedIn URL"
-                        />
+                      <span className="input-prefix">LinkedIn</span>
+                      <input
+                        type="text"
+                        className="input"
+                        value={editForm.socialLinks?.linkedin || ''}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, socialLinks: { ...prev.socialLinks, linkedin: e.target.value } }))}
+                        placeholder="LinkedIn URL"
+                      />
                     </div>
                     <div className="edit-row">
-                        <span className="input-prefix">Twitter</span>
-                        <input
-                          type="text"
-                          className="input"
-                          value={editForm.socialLinks?.twitter || ''}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, socialLinks: { ...prev.socialLinks, twitter: e.target.value } }))}
-                          placeholder="Twitter URL"
-                        />
+                      <span className="input-prefix">Twitter</span>
+                      <input
+                        type="text"
+                        className="input"
+                        value={editForm.socialLinks?.twitter || ''}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, socialLinks: { ...prev.socialLinks, twitter: e.target.value } }))}
+                        placeholder="Twitter URL"
+                      />
                     </div>
                     <div className="edit-row">
-                        <span className="input-prefix">Website</span>
-                        <input
-                          type="text"
-                          className="input"
-                          value={editForm.socialLinks?.website || ''}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, socialLinks: { ...prev.socialLinks, website: e.target.value } }))}
-                          placeholder="Website URL"
-                        />
+                      <span className="input-prefix">Website</span>
+                      <input
+                        type="text"
+                        className="input"
+                        value={editForm.socialLinks?.website || ''}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, socialLinks: { ...prev.socialLinks, website: e.target.value } }))}
+                        placeholder="Website URL"
+                      />
                     </div>
                   </div>
                 </>
               ) : (
                 <>
-{contact.company && (
-<div className="detail-item">
-<label>Company</label>
-<p>{contact.company}</p>
-</div>
-)}
-{contact.job_title && (
-<div className="detail-item">
-<label>Job Title</label>
-<p>{contact.job_title}</p>
-</div>
-)}
-{contact.birthday && (
-<div className="detail-item">
-<label>Birthday</label>
-<p>{new Date(contact.birthday).toLocaleDateString()}</p>
-</div>
-)}
-{contact.emails?.map((email: ContactEmail, idx: number) => (
-<div className="detail-item" key={idx}>
-<label>Email {email.label && `(${email.label})`}</label>
-<p>{email.value}</p>
-</div>
-))}
-{contact.phones?.map((phone: ContactPhone, idx: number) => (
-<div className="detail-item" key={idx}>
-<label>Phone {phone.label && `(${phone.label})`}</label>
-<p>{phone.value}</p>
-</div>
-              ))}
+                  {contact.company && (
+                    <div className="detail-item">
+                      <label>Company</label>
+                      <p>{contact.company}</p>
+                    </div>
+                  )}
+                  {contact.job_title && (
+                    <div className="detail-item">
+                      <label>Job Title</label>
+                      <p>{contact.job_title}</p>
+                    </div>
+                  )}
+                  {contact.birthday && (
+                    <div className="detail-item">
+                      <label>Birthday</label>
+                      <p>{new Date(contact.birthday).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                  {contact.emails?.map((email: ContactEmail, idx: number) => (
+                    <div className="detail-item" key={idx}>
+                      <label>Email {email.label && `(${email.label})`}</label>
+                      <p>{email.value}</p>
+                    </div>
+                  ))}
+                  {contact.phones?.map((phone: ContactPhone, idx: number) => (
+                    <div className="detail-item" key={idx}>
+                      <label>Phone {phone.label && `(${phone.label})`}</label>
+                      <p>{phone.value}</p>
+                    </div>
+                  ))}
                   {contact.addresses?.map((addr: ContactAddress, idx: number) => (
                     <div className="detail-item" key={idx}>
                       <label>Address {addr.label && `(${addr.label})`}</label>
                       <p>{[addr.street, addr.city, addr.state, addr.zip, addr.country].filter(Boolean).join(', ')}</p>
-            </div>
+                    </div>
                   ))}
                   {contact.social_links && Object.entries(contact.social_links).map(([key, value]) => (
-                     value && (
+                    value && (
                       <div className="detail-item" key={key}>
                         <label>{key}</label>
                         <p><a href={value as string} target="_blank" rel="noopener noreferrer">{value as string}</a></p>
                       </div>
-                     )
+                    )
                   ))}
                 </>
               )}

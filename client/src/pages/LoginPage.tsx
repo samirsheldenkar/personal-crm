@@ -28,6 +28,7 @@ export function LoginPage() {
             <label>Email</label>
             <input
               type="email"
+              className="input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -37,6 +38,7 @@ export function LoginPage() {
             <label>Password</label>
             <input
               type="password"
+              className="input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

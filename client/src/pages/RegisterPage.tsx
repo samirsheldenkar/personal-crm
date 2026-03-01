@@ -29,6 +29,7 @@ export function RegisterPage() {
             <label>Name (optional)</label>
             <input
               type="text"
+              className="input"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
             />
@@ -37,6 +38,7 @@ export function RegisterPage() {
             <label>Email</label>
             <input
               type="email"
+              className="input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -46,6 +48,7 @@ export function RegisterPage() {
             <label>Password</label>
             <input
               type="password"
+              className="input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

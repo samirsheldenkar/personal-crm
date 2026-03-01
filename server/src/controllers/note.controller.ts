@@ -2,6 +2,14 @@ import { Request, Response } from 'express';
 import { noteService } from '../services/note.service';
 import { createNoteSchema, updateNoteSchema } from '../types/note';
 
+export async function listRecent(req: Request, res: Response) {
+  const userId = req.user!.userId;
+  const limit = Math.min(parseInt(req.query.limit as string) || 20, 100);
+
+  const notes = await noteService.listRecent(userId, limit);
+  res.json(notes);
+}
+
 export async function listByContact(req: Request, res: Response) {
   const userId = req.user!.userId;
   const { contactId } = req.params;

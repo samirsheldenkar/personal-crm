@@ -9,17 +9,18 @@ import {
   archive,
   getTimeline,
 } from '../controllers/contact.controller';
+import { wrapAsync } from '../utils/wrapAsync';
 
 const router = Router();
 
 router.use(authenticate);
 
-router.get('/', list);
-router.post('/', create);
-router.get('/:id', getById);
-router.patch('/:id', update);
-router.delete('/:id', remove);
-router.post('/:id/archive', archive);
-router.get('/:id/timeline', getTimeline);
+router.get('/', wrapAsync(list));
+router.post('/', wrapAsync(create));
+router.get('/:id', wrapAsync(getById));
+router.patch('/:id', wrapAsync(update));
+router.delete('/:id', wrapAsync(remove));
+router.post('/:id/archive', wrapAsync(archive));
+router.get('/:id/timeline', wrapAsync(getTimeline));
 
 export default router;

@@ -1,7 +1,10 @@
-import { Component, type ErrorInfo, type ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { remindersApi, contactsApi, searchApi, notesApi, relationshipsApi } from '../api';
-import type { Contact, Note, Relationship, Reminder, SearchResult } from '../types';
+import type { Contact, Relationship, Reminder, SearchResult } from '../types';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { useDebounce } from '../hooks/useDebounce';
+import { getErrorMessage } from '../utils/getErrorMessage';
 import './DashboardPage.css';
 
 interface BirthdayItem {
@@ -20,50 +23,6 @@ interface ActivityItem {
   description: string;
   timestamp: string;
   contactId: string;
-}
-
-interface WidgetErrorBoundaryProps {
-  title: string;
-  children: ReactNode;
-}
-
-interface WidgetErrorBoundaryState {
-  hasError: boolean;
-}
-
-class WidgetErrorBoundary extends Component<WidgetErrorBoundaryProps, WidgetErrorBoundaryState> {
-  public state: WidgetErrorBoundaryState = { hasError: false };
-
-  public static getDerivedStateFromError(): WidgetErrorBoundaryState {
-    return { hasError: true };
-  }
-
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    console.error(`Dashboard widget failed: ${this.props.title}`, error, errorInfo);
-  }
-
-  public render() {
-    if (this.state.hasError) {
-      return (
-        <div className="widget-state widget-error" role="alert">
-          <p>Could not load {this.props.title.toLowerCase()}.</p>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-function useDebounce(value: string, delay: number) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setDebouncedValue(value), delay);
-    return () => window.clearTimeout(timer);
-  }, [value, delay]);
-
-  return debouncedValue;
 }
 
 function getContactName(contact: Pick<Contact, 'first_name' | 'last_name'>) {
@@ -153,13 +112,6 @@ export function DashboardPage() {
   const [searchError, setSearchError] = useState<string | null>(null);
 
   const debouncedSearchQuery = useDebounce(searchQuery.trim(), 300);
-
-  const getErrorMessage = (error: unknown, fallback: string) => {
-    if (error instanceof Error && error.message) {
-      return error.message;
-    }
-    return fallback;
-  };
 
   useEffect(() => {
     loadDashboardData();
@@ -308,35 +260,17 @@ export function DashboardPage() {
           };
         });
 
-      const noteResults = await Promise.allSettled(
-        contactsForWidgets.map(async (contact) => {
-          const notes = await notesApi.listByContact(contact.id);
-          return { contact, notes };
-        }),
-      );
-
-      const noteActivities: ActivityItem[] = [];
-      noteResults.forEach((result) => {
-        if (result.status !== 'fulfilled') {
-          return;
-        }
-
-        const { contact, notes } = result.value;
-        notes.forEach((note: Note) => {
-          if (!parseDateValue(note.created_at)) {
-            return;
-          }
-
-          noteActivities.push({
-            id: `note-${note.id}`,
-            type: 'note',
-            contactName: getContactName(contact),
-            description: 'Note added',
-            timestamp: note.created_at,
-            contactId: contact.id,
-          });
-        });
-      });
+      const recentNotes = await notesApi.listRecent(20);
+      const noteActivities: ActivityItem[] = recentNotes
+        .filter((note) => Boolean(parseDateValue(note.created_at)))
+        .map((note) => ({
+          id: `note-${note.id}`,
+          type: 'note' as const,
+          contactName: `${note.contact_first_name} ${note.contact_last_name || ''}`.trim(),
+          description: 'Note added',
+          timestamp: note.created_at,
+          contactId: note.contact_id,
+        }));
 
       const sortedActivity = [...contactActivities, ...relationshipActivities, ...noteActivities]
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
@@ -466,7 +400,7 @@ export function DashboardPage() {
       </div>
 
       <div className="dashboard-grid">
-        <WidgetErrorBoundary title="Upcoming reminders">
+        <ErrorBoundary title="Could not load upcoming reminders">
           <section className="dashboard-section">
             <div className="section-header">
               <h2>Upcoming Reminders</h2>
@@ -492,9 +426,9 @@ export function DashboardPage() {
               </div>
             )}
           </section>
-        </WidgetErrorBoundary>
+        </ErrorBoundary>
 
-        <WidgetErrorBoundary title="Recently added contacts">
+        <ErrorBoundary title="Could not load recently added contacts">
           <section className="dashboard-section">
             <div className="section-header">
               <h2>Recently Added</h2>
@@ -526,9 +460,9 @@ export function DashboardPage() {
               </div>
             )}
           </section>
-        </WidgetErrorBoundary>
+        </ErrorBoundary>
 
-        <WidgetErrorBoundary title="Upcoming birthdays">
+        <ErrorBoundary title="Could not load upcoming birthdays">
           <section className="dashboard-section">
             <div className="section-header">
               <h2>Upcoming Birthdays</h2>
@@ -564,9 +498,9 @@ export function DashboardPage() {
               </div>
             )}
           </section>
-        </WidgetErrorBoundary>
+        </ErrorBoundary>
 
-        <WidgetErrorBoundary title="Recent activity">
+        <ErrorBoundary title="Could not load recent activity">
           <section className="dashboard-section">
             <div className="section-header">
               <h2>Recent Activity</h2>
@@ -600,7 +534,7 @@ export function DashboardPage() {
               </div>
             )}
           </section>
-        </WidgetErrorBoundary>
+        </ErrorBoundary>
       </div>
     </div>
   );

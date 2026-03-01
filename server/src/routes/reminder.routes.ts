@@ -1,14 +1,15 @@
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth';
 import { list, create, update, remove } from '../controllers/reminder.controller';
+import { wrapAsync } from '../utils/wrapAsync';
 
 const router = Router();
 
 router.use(authenticate);
 
-router.get('/', list);
-router.post('/', create);
-router.patch('/:id', update);
-router.delete('/:id', remove);
+router.get('/', wrapAsync(list));
+router.post('/', wrapAsync(create));
+router.patch('/:id', wrapAsync(update));
+router.delete('/:id', wrapAsync(remove));
 
 export default router;

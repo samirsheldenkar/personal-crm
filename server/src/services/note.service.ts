@@ -3,6 +3,19 @@ import { CreateNoteInput, UpdateNoteInput } from '../types/note';
 import { AppError } from '../utils/errors';
 
 export class NoteService {
+  async listRecent(userId: string, limit: number = 20) {
+    return await db('notes')
+      .join('contacts', 'notes.contact_id', 'contacts.id')
+      .where('notes.user_id', userId)
+      .select(
+        'notes.*',
+        'contacts.first_name as contact_first_name',
+        'contacts.last_name as contact_last_name',
+      )
+      .orderBy('notes.created_at', 'desc')
+      .limit(limit);
+  }
+
   async listByContact(userId: string, contactId: string) {
     const contact = await db('contacts')
       .where('id', contactId)

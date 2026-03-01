@@ -39,16 +39,7 @@ export function DeleteConfirmationModal({
     return () => window.removeEventListener('keydown', handleEsc);
   }, [isOpen, onClose]);
 
-  // Handle Enter key
-  useEffect(() => {
-    const handleEnter = (e: KeyboardEvent) => {
-      if (isOpen && e.key === 'Enter') {
-        onConfirm();
-      }
-    };
-    window.addEventListener('keydown', handleEnter);
-    return () => window.removeEventListener('keydown', handleEnter);
-  }, [isOpen, onConfirm]);
+
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
@@ -60,11 +51,11 @@ export function DeleteConfirmationModal({
 
   return (
     <div className="modal-overlay" onClick={handleBackdropClick}>
-      <div 
-        className="modal delete-modal" 
-        ref={modalRef} 
-        role="dialog" 
-        aria-modal="true" 
+      <div
+        className="modal delete-modal"
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
         aria-labelledby="delete-modal-title"
       >
         <div className="modal-header delete-modal-header">
@@ -93,16 +84,16 @@ export function DeleteConfirmationModal({
         </div>
 
         <div className="modal-footer delete-modal-footer">
-          <button 
-            type="button" 
-            className="btn btn-secondary" 
+          <button
+            type="button"
+            className="btn btn-secondary"
             onClick={onClose}
           >
             Cancel
           </button>
-          <button 
-            type="button" 
-            className="btn btn-danger" 
+          <button
+            type="button"
+            className="btn btn-danger"
             onClick={onConfirm}
             ref={confirmButtonRef}
           >

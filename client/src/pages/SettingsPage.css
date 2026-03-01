@@ -22,7 +22,8 @@
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
-  margin-bottom: -1px; /* Align with border-bottom */
+  margin-bottom: -1px;
+  /* Align with border-bottom */
 }
 
 .settings-nav .tab:hover {
@@ -114,4 +115,51 @@
 .field-item strong {
   font-weight: 500;
   color: var(--text-main);
+}
+
+.settings-loading {
+  margin-top: var(--spacing-6);
+}
+
+.loading-skeleton {
+  background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+  background-size: 200% 100%;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border-radius: var(--radius-lg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .loading-skeleton {
+    background: linear-gradient(90deg, var(--gray-700) 25%, var(--gray-800) 50%, var(--gray-700) 75%);
+    background-size: 200% 100%;
+  }
+}
+
+.settings-error {
+  padding: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.settings-error p {
+  margin: 0;
+  flex: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .settings-error {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+  }
+}
+
+.empty-text {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  padding: var(--spacing-4);
 }

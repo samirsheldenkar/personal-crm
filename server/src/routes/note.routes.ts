@@ -1,14 +1,16 @@
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth';
-import { listByContact, create, update, remove } from '../controllers/note.controller';
+import { listByContact, listRecent, create, update, remove } from '../controllers/note.controller';
+import { wrapAsync } from '../utils/wrapAsync';
 
 const router = Router();
 
 router.use(authenticate);
 
-router.get('/contact/:contactId', listByContact);
-router.post('/contact/:contactId', create);
-router.patch('/:id', update);
-router.delete('/:id', remove);
+router.get('/recent', wrapAsync(listRecent));
+router.get('/contact/:contactId', wrapAsync(listByContact));
+router.post('/contact/:contactId', wrapAsync(create));
+router.patch('/:id', wrapAsync(update));
+router.delete('/:id', wrapAsync(remove));
 
 export default router;
