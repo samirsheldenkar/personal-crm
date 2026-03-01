@@ -4,7 +4,7 @@ import { contactsApi, notesApi, relationshipsApi } from '../api';
 import type { CreateContactInput } from '../api/contacts';
 import { RelationshipGraph } from '../components/RelationshipGraph';
 import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
-import type { ContactEmail, ContactPhone, ContactGraph, ContactWithDetails, Note } from '../types';
+import type { ContactEmail, ContactPhone, ContactAddress, ContactGraph, ContactWithDetails, Note } from '../types';
 import './ContactDetailPage.css';
 
 export function ContactDetailPage() {
@@ -130,13 +130,13 @@ export function ContactDetailPage() {
     }
   };
 
-  const updateEditForm = (field: keyof CreateContactInput, value: any) => {
+  const updateEditForm = (field: keyof CreateContactInput, value: CreateContactInput[keyof CreateContactInput]) => {
     setEditForm(prev => ({ ...prev, [field]: value }));
   };
 
   const updateArrayItem = (field: 'emails' | 'phones' | 'addresses', index: number, key: string, value: string) => {
     setEditForm(prev => {
-      const array = [...(prev[field] as any[])];
+      const array = [...((prev[field] as ContactEmail[] | ContactPhone[] | ContactAddress[] | undefined) ?? [])];
       array[index] = { ...array[index], [key]: value };
       return { ...prev, [field]: array };
     });
@@ -144,7 +144,7 @@ export function ContactDetailPage() {
 
   const addArrayItem = (field: 'emails' | 'phones' | 'addresses') => {
     setEditForm(prev => {
-      const array = [...(prev[field] as any[] || [])];
+      const array = [...((prev[field] as ContactEmail[] | ContactPhone[] | ContactAddress[] | undefined) ?? [])];
       if (field === 'emails') array.push({ value: '', label: 'work' });
       if (field === 'phones') array.push({ value: '', label: 'mobile' });
       if (field === 'addresses') array.push({ street: '', city: '', state: '', zip: '', country: '', label: 'home' });
@@ -154,7 +154,7 @@ export function ContactDetailPage() {
 
   const removeArrayItem = (field: 'emails' | 'phones' | 'addresses', index: number) => {
     setEditForm(prev => {
-      const array = [...(prev[field] as any[])];
+      const array = [...((prev[field] as ContactEmail[] | ContactPhone[] | ContactAddress[] | undefined) ?? [])];
       array.splice(index, 1);
       return { ...prev, [field]: array };
     });
@@ -514,7 +514,7 @@ Delete Contact
 <p>{phone.value}</p>
 </div>
               ))}
-                  {contact.addresses?.map((addr: any, idx: number) => (
+                  {contact.addresses?.map((addr: ContactAddress, idx: number) => (
                     <div className="detail-item" key={idx}>
                       <label>Address {addr.label && `(${addr.label})`}</label>
                       <p>{[addr.street, addr.city, addr.state, addr.zip, addr.country].filter(Boolean).join(', ')}</p>

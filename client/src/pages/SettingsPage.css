@@ -1,8 +1,45 @@
-.settings-tabs {
+.settings-page {
+  padding: var(--spacing-6);
+  max-width: 1200px;
+  margin: 0 auto;
+
+}
+
+.settings-nav {
   display: flex;
   gap: var(--spacing-2);
   margin-bottom: var(--spacing-6);
   border-bottom: 1px solid var(--border-color);
+}
+
+.settings-nav .tab {
+  padding: var(--spacing-2) var(--spacing-4);
+  border: none;
+  background: none;
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  margin-bottom: -1px; /* Align with border-bottom */
+}
+
+.settings-nav .tab:hover {
+  color: var(--text-main);
+  background-color: var(--gray-50);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.settings-nav .tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  .settings-nav .tab:hover {
+    background-color: var(--gray-800);
+  }
 }
 
 .settings-content {
@@ -11,6 +48,7 @@
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-color);
   min-height: 400px;
+  box-shadow: var(--shadow-sm);
 }
 
 .settings-content h2 {
@@ -20,12 +58,36 @@
   border-bottom: 1px solid var(--border-color);
 }
 
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.tag-item {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: white;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+
+.tag-item:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
 .custom-field-list {
   display: grid;
   gap: var(--spacing-3);
 }
 
-.custom-field-item {
+.field-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -33,19 +95,23 @@
   background: var(--bg-body);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.custom-field-item:hover {
+.field-item:hover {
   background-color: var(--gray-100);
+  transform: translateX(2px);
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-sm);
 }
 
 @media (prefers-color-scheme: dark) {
-  .custom-field-item:hover {
+  .field-item:hover {
     background-color: var(--gray-800);
   }
 }
 
-.custom-field-item strong {
+.field-item strong {
   font-weight: 500;
+  color: var(--text-main);
 }

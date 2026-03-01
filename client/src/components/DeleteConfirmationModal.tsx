@@ -39,6 +39,17 @@ export function DeleteConfirmationModal({
     return () => window.removeEventListener('keydown', handleEsc);
   }, [isOpen, onClose]);
 
+  // Handle Enter key
+  useEffect(() => {
+    const handleEnter = (e: KeyboardEvent) => {
+      if (isOpen && e.key === 'Enter') {
+        onConfirm();
+      }
+    };
+    window.addEventListener('keydown', handleEnter);
+    return () => window.removeEventListener('keydown', handleEnter);
+  }, [isOpen, onConfirm]);
+
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
       onClose();

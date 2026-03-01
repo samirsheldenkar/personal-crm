@@ -145,3 +145,150 @@ Emitted 'error' event on Server instance at:
 Node.js v22.22.0
 8:57:13 PM [tsx] change in ./src/db/knexfile.ts Rerunning...
 c🚀 Server running on http://localhost:3001
+10:01:03 AM [tsx] change in ./src/controllers/contact.controller.ts Restarting...
+c🚀 Server running on http://localhost:3001
+10:01:15 AM [tsx] change in ./src/controllers/relationship.controller.ts Restarting...
+cnode:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (/home/samir/personal-crm/server/node_modules/express/lib/application.js:635:24)
+    at searchRoutes (/home/samir/personal-crm/server/src/index.ts:38:5)
+    at Object.<anonymous> (/home/samir/personal-crm/server/src/index.ts:42:16)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object.transformer (/home/samir/personal-crm/server/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v22.22.0
+10:01:26 AM [tsx] change in ./src/controllers/note.controller.ts Rerunning...
+c🚀 Server running on http://localhost:3001
+10:01:40 AM [tsx] change in ./src/controllers/tag.controller.ts Restarting...
+cnode:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (/home/samir/personal-crm/server/node_modules/express/lib/application.js:635:24)
+    at searchRoutes (/home/samir/personal-crm/server/src/index.ts:38:5)
+    at Object.<anonymous> (/home/samir/personal-crm/server/src/index.ts:42:16)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object.transformer (/home/samir/personal-crm/server/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v22.22.0
+10:01:50 AM [tsx] change in ./src/controllers/customField.controller.ts Rerunning...
+c🚀 Server running on http://localhost:3001
+10:02:00 AM [tsx] change in ./src/controllers/reminder.controller.ts Restarting...
+cnode:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (/home/samir/personal-crm/server/node_modules/express/lib/application.js:635:24)
+    at searchRoutes (/home/samir/personal-crm/server/src/index.ts:38:5)
+    at Object.<anonymous> (/home/samir/personal-crm/server/src/index.ts:42:16)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object.transformer (/home/samir/personal-crm/server/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v22.22.0
+10:02:05 AM [tsx] change in ./src/controllers/search.controller.ts Rerunning...
+c🚀 Server running on http://localhost:3001
+10:02:16 AM [tsx] change in ./src/controllers/auth.controller.ts Restarting...
+cnode:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (/home/samir/personal-crm/server/node_modules/express/lib/application.js:635:24)
+    at searchRoutes (/home/samir/personal-crm/server/src/index.ts:38:5)
+    at Object.<anonymous> (/home/samir/personal-crm/server/src/index.ts:42:16)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object.transformer (/home/samir/personal-crm/server/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v22.22.0
+10:05:14 AM [tsx] change in ./src/middleware/requestLogger.ts Rerunning...
+c🚀 Server running on http://localhost:3001
+10:05:45 AM [tsx] change in ./src/middleware/requestLogger.ts Restarting...
+cnode:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (/home/samir/personal-crm/server/node_modules/express/lib/application.js:635:24)
+    at searchRoutes (/home/samir/personal-crm/server/src/index.ts:38:5)
+    at Object.<anonymous> (/home/samir/personal-crm/server/src/index.ts:42:16)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object.transformer (/home/samir/personal-crm/server/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v22.22.0
+10:05:55 AM [tsx] change in ./src/middleware/requestLogger.ts Rerunning...
+c🚀 Server running on http://localhost:3001

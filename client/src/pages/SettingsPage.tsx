@@ -26,10 +26,10 @@ export function SettingsPage() {
   };
 
   return (
-    <div className="page">
+    <div className="settings-page">
       <h1>Settings</h1>
 
-      <div className="settings-tabs">
+      <div className="settings-nav">
         <button
           className={`tab ${activeTab === 'tags' ? 'active' : ''}`}
           onClick={() => setActiveTab('tags')}
@@ -52,7 +52,7 @@ export function SettingsPage() {
               {tags.map((tag) => (
                 <span
                   key={tag.id}
-                  className="badge"
+                  className="tag-item"
                   style={{ backgroundColor: tag.color }}
                 >
                   {tag.name}
@@ -67,7 +67,7 @@ export function SettingsPage() {
             <h2>Custom Fields</h2>
             <div className="custom-field-list">
               {customFields.map((field) => (
-                <div key={field.id} className="custom-field-item">
+                <div key={field.id} className="field-item">
                   <strong>{field.name}</strong>
                   <span className="badge">{field.field_type}</span>
                 </div>

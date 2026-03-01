@@ -1,0 +1,23 @@
+=== Server Build ===
+
+> personal-crm-server@0.1.0 build
+> tsc
+
+
+=== Client Build ===
+
+> client@0.0.0 build
+> tsc -b && vite build
+
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 640 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.81 kB │ gzip:   0.44 kB
+dist/assets/index-B_b_5RBk.css   29.71 kB │ gzip:   5.37 kB
+dist/assets/index-Ud-DTn9K.js   339.61 kB │ gzip: 107.10 kB
+✓ built in 1.71s
+
+Status: Both builds successful
+Date: Sun Mar  1 10:23:20 GMT 2026
